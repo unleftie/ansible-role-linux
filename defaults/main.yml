@@ -1,0 +1,42 @@
+---
+service_name: ""
+
+packages_upgrade_all: true
+packages_extra: true
+packages_install_jdk: true
+packages_install_jdk_extra: false
+packages_autoupdate_enabled: true
+
+system_hardening: true
+system_log_all_commands: false
+sysctl_overwrite:
+  # Disable IPv6 traffic
+  # net.ipv6.conf.all.disable_ipv6: 0
+  # Set swappiness value
+  vm.swappiness: "{{ swap_swappiness_value }}"
+
+system_configure: true
+system_timezone: "Europe/Kiev"
+
+user_configure: false
+user_root_update_password: false
+user_root_password: "" # value > 8 characters
+user_initial_password: "" # value > 8 characters
+user_names_list: [""]
+user_group_name: ""
+user_group_ssh_password_auth: false
+
+ssh_configure: true
+# Possible values: "yes", "no", "forced-commands-only", "prohibit-password" (default)
+ssh_permit_root_login: "prohibit-password"
+
+swap_configure: true
+swap_size: 513
+
+auditd_configure: false
+
+firewall_configure: true
+firewall_reset_rules: false
+firewall_limit_ssh: true
+firewall_input_policy_drop: true
+firewall_forward_policy_drop: false

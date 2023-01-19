@@ -1,0 +1,52 @@
+---
+- name: Fetch OS dependent variables
+  include_vars:
+    file: "{{ item }}"
+    name: "os_vars"
+  with_first_found:
+    - files:
+        - "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}.yml"
+        - "{{ ansible_facts.distribution }}.yml"
+        - "{{ ansible_facts.os_family }}_{{ ansible_facts.distribution_major_version }}.yml"
+        - "{{ ansible_facts.os_family }}.yml"
+      skip: true
+
+- name: Set OS dependent variables, if not already defined
+  set_fact:
+    "{{ item.key }}": "{{ item.value }}"
+  when: "not lookup('varnames', '^' + item.key + '$')"
+  with_dict: "{{ os_vars }}"
+  tags: always
+
+- import_tasks: assert.yml
+  run_once: true
+  delegate_to: localhost
+
+- include_tasks: packages.yml
+
+- include_tasks: autoupdate.yml
+  when: packages_autoupdate_enabled | bool
+
+- include_tasks: snoopy.yml
+  when: system_log_all_commands | bool
+
+- include_tasks: hardening.yml
+  when: system_hardening | bool
+
+- include_tasks: system.yml
+  when: system_configure | bool
+
+- include_tasks: users.yml
+  when: user_configure | bool
+
+- include_tasks: ssh.yml
+  when: ssh_configure | bool
+
+- include_tasks: swap.yml
+  when: swap_configure | bool
+
+- include_tasks: auditd.yml
+  when: auditd_configure | bool
+
+- include_tasks: firewall.yml
+  when: firewall_configure | bool

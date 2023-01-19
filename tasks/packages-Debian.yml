@@ -1,0 +1,42 @@
+---
+# TODO: remove backport repo from /etc/apt/sources.list
+- name: Ensure backports repository is set
+  apt_repository:
+    repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"
+    state: present
+    install_python_apt: true
+    update_cache: true
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_distribution_major_version in ["10", "11"]
+
+- name: Ensure backports source repository is set
+  apt_repository:
+    repo: "deb-src http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"
+    state: present
+    install_python_apt: true
+    update_cache: true
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_distribution_major_version in ["10", "11"]
+
+- name: Ensure apt cache and packages are updated
+  apt:
+    update_cache: true
+    force_apt_get: true
+    cache_valid_time: 3600
+  changed_when: false
+
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
+    force_apt_get: true
+  when: packages_upgrade_all | bool
+
+- name: Install extra list of packages
+  package:
+    state: present
+    name: btop
+  when:
+    - packages_extra | bool
+    - ansible_distribution_major_version != "10"

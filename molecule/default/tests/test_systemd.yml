@@ -1,0 +1,7 @@
+---
+command:
+  systemctl list-units --state failed:
+    exit-status: 0
+    stdout:
+      - 0 loaded units listed
+    stderr: []

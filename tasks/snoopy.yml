@@ -1,0 +1,23 @@
+---
+- name: Import a repository key
+  rpm_key:
+    state: present
+    key: "{{ snoopy_rpm_key_url }}"
+  when: ansible_os_family == "RedHat"
+
+- name: Add repository
+  yum_repository:
+    name: "snoopy"
+    description: "Snoopy Upstream Stable Repository"
+    baseurl: "{{ snoopy_rpm_repo_url }}"
+    gpgcheck: true
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install package
+  package:
+    state: present
+    name: snoopy
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5

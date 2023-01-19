@@ -1,0 +1,204 @@
+---
+- name: Upgrade password hashing algorithm to SHA-512
+  template:
+    src: "libuser-config.j2"
+    dest: "/etc/libuser.conf"
+    owner: "root"
+    group: "root"
+    mode: "0640"
+
+- name: Check if portable GNU assembler exist
+  stat:
+    path: "/usr/bin/as"
+  register: _assembler_bin_check
+
+- name: Protect portable GNU assembler
+  file:
+    path: "/usr/bin/as"
+    owner: "root"
+    group: "root"
+    mode: "0750"
+  when: _assembler_bin_check.stat.exists
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+
+- name: Restrict access to at
+  copy:
+    content: "root"
+    dest: "/etc/at.allow"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when: "'at' in ansible_facts.packages"
+
+- name: Protect at.deny file
+  file:
+    path: "/etc/at.deny"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when: "'at' in ansible_facts.packages"
+
+- name: Find cron files and directories
+  find:
+    paths:
+      - /etc
+    patterns:
+      - cron.hourly
+      - cron.daily
+      - cron.weekly
+      - cron.monthly
+      - cron.d
+      - crontab
+    file_type: any
+  register: cron_directories
+
+- name: Protect cron files
+  file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: og-rwx
+  with_items: "{{ cron_directories.files }}"
+
+- name: Find shadow files
+  stat:
+    path: "{{ item }}"
+  loop:
+    - "/etc/shadow"
+    - "/etc/gshadow"
+    - "/etc/shadow-"
+    - "/etc/gshadow-"
+  register: _shadow_files
+
+- name: Protect shadow files
+  file:
+    dest: "{{ item.item }}"
+    owner: "{{ os_shadow_perms.owner }}"
+    group: "{{ os_shadow_perms.group }}"
+    mode: "{{ os_shadow_perms.mode }}"
+  when: item.stat.exists
+  loop: "{{ _shadow_files.results }}"
+
+- name: Find passwd files
+  stat:
+    path: "{{ item }}"
+  loop:
+    - "/etc/passwd"
+    - "/etc/group"
+    - "/etc/passwd-"
+    - "/etc/group-"
+  register: _passwd_files
+
+- name: Protect passwd files
+  file:
+    dest: "{{ item.item }}"
+    owner: "{{ os_passwd_perms.owner }}"
+    group: "{{ os_passwd_perms.group }}"
+    mode: "{{ os_passwd_perms.mode }}"
+  when: item.stat.exists
+  loop: "{{ _passwd_files.results }}"
+
+- name: Protect sysctl.conf
+  file:
+    path: "/etc/sysctl.conf"
+    owner: "root"
+    group: "root"
+    mode: "0640"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Change sysctls
+  block:
+    - name: Create a combined sysctl-dict
+      set_fact:
+        sysctl_config: "{{ sysctl_config | combine(sysctl_custom_config) }}"
+      when: sysctl_custom_config | default()
+
+    - name: Create a combined sysctl-dict if overwrites are defined
+      set_fact:
+        sysctl_config: "{{ sysctl_config | combine(sysctl_overwrite) }}"
+      when: sysctl_overwrite | default()
+
+    - name: Change various sysctl settings
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_set: true
+        state: present
+        reload: true
+        ignoreerrors: true
+        sysctl_file: "/etc/sysctl.conf"
+      with_dict: "{{ sysctl_config }}"
+      when: item.key not in sysctl_unsupported_entries | default()
+  when: ansible_virtualization_type not in ['docker', 'lxc', 'openvz']
+
+- name: Disable CTRL-ALT-DEL
+  systemd:
+    name: ctrl-alt-del.target
+    masked: true
+    daemon_reload: true
+  when: ansible_service_mgr == "systemd"
+
+- name: Create login.defs
+  template:
+    src: "login.defs.j2"
+    dest: "/etc/login.defs"
+    owner: "root"
+    group: "root"
+    mode: "0444"
+
+- name: Set default umask value
+  copy:
+    content: "umask {{ os_env_umask }}"
+    dest: "/etc/profile.d/umask.sh"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: os_env_umask is defined
+
+- name: Set timeout for logout users automatically
+  template:
+    src: "profile.d/tmout.sh.j2"
+    dest: "/etc/profile.d/tmout.sh"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: os_security_auto_logout is defined
+
+- name: Disable unused filesystems
+  block:
+    - name: Install modprobe to disable filesystems
+      package:
+        name: "{{ package_modprobe }}"
+        state: "present"
+
+    - name: Check if efi is installed
+      stat:
+        path: "/sys/firmware/efi"
+      register: efi_installed
+
+    - name: Remove vfat from fs-list if efi is used
+      set_fact:
+        os_unused_filesystems: "{{ os_unused_filesystems | difference('vfat') }}"
+      when:
+        - efi_installed.stat.isdir is defined
+        - efi_installed.stat.isdir
+
+    - name: Remove used filesystems from fs-list
+      set_fact:
+        os_unused_filesystems: "{{ os_unused_filesystems | difference(ansible_mounts | map(attribute='fstype') | list) }}"
+
+    - name: Add fs.conf template
+      template:
+        src: "modprobe.d/fs.conf.j2"
+        dest: "/etc/modprobe.d/fs.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+  when:
+    - os_unused_filesystems is defined
+    - os_unused_filesystems | length > 0

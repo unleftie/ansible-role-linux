@@ -1,0 +1,43 @@
+---
+- name: Configure autoupdates
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/apt/apt.conf.d/{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  with_items:
+    - 20auto-upgrades
+    - 50unattended-upgrades
+  when: ansible_pkg_mgr == "apt"
+
+- name: Set correct automatic update utility vars
+  set_fact:
+    update_service: unattended-upgrades
+  when: ansible_pkg_mgr == "apt"
+
+- name: Set correct automatic update utility vars
+  set_fact:
+    update_service: dnf-automatic-install.timer
+    update_conf_path: /etc/dnf/automatic.conf
+  when: ansible_pkg_mgr == "dnf"
+
+- name: Set correct automatic update utility vars
+  set_fact:
+    update_service: yum-cron
+    update_conf_path: /etc/yum/yum-cron.conf
+  when: ansible_pkg_mgr == "yum"
+
+- name: Ensure automatic update utility is running and enabled on boot
+  systemd:
+    name: "{{ update_service }}"
+    state: started
+    enabled: true
+
+- name: Configure autoupdates
+  lineinfile:
+    dest: "{{ update_conf_path }}"
+    regexp: "^apply_updates = .+"
+    line: "apply_updates = yes"
+    mode: "0644"
+  when: (ansible_pkg_mgr == "yum") or (ansible_pkg_mgr == "dnf")

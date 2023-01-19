@@ -1,0 +1,3 @@
+{% for fs in os_unused_filesystems | difference(os_filesystem_whitelist) %}
+install {{fs}} /bin/true
+{% endfor %}

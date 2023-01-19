@@ -1,0 +1,80 @@
+---
+- include_tasks: packages-RedHat.yml
+  when: ansible_os_family == "RedHat"
+
+- include_tasks: packages-Debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Remove unnecessary packages
+  package:
+    state: absent
+    name: "{{ packages_unnecessary_list | default(omit, true) }}"
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5
+
+- name: Install default java packages
+  package:
+    state: present
+    name: "{{ packages_jdk_list | default(omit, true) }}"
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5
+  when: packages_install_jdk | bool
+
+- name: Install extra java packages
+  package:
+    state: present
+    name: "{{ packages_jdk_extra_list | default(omit, true) }}"
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5
+  when: packages_install_jdk_extra | bool
+
+- name: Install required list of packages
+  package:
+    state: present
+    name:
+      - sudo
+      - bash
+      - iptables
+      - openssl
+      - curl
+      - ca-certificates
+      - gnupg
+      - gnupg2
+      - chrony
+      - file
+      - wget
+      - libuser
+      - net-tools
+      - screen
+      - tcpdump
+      - sysstat
+      - mlocate
+      - telnet
+      - bmon
+      - htop
+      - rkhunter
+      - "{{ item }}"
+  with_items: "{{ packages_required_list | default(omit, true) }}"
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5
+
+- name: Install extra list of packages
+  package:
+    state: present
+    name:
+      - nano
+      - python3
+      - lnav
+      - zip
+      - unzip
+      - at
+      - git
+      - nmap
+  register: _progress_status
+  until: _progress_status is succeeded
+  retries: 5
+  when: packages_extra | bool

@@ -1,0 +1,40 @@
+---
+# require the root password instead of user password
+- name: Change the "sudo" configuration
+  lineinfile:
+    path: "/etc/sudoers"
+    regexp: "^rootpw"
+    line: "Defaults rootpw"
+    validate: "visudo -cf %s"
+
+- name: Change timezone
+  timezone:
+    name: "{{ system_timezone }}"
+
+- name: Add /etc/timezone file
+  copy:
+    content: "{{ system_timezone }}"
+    dest: "/etc/timezone"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Ensure required locale exists
+  community.general.locale_gen:
+    name: "{{ system_locale }}"
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_distribution_major_version in ["10", "11"]
+
+- name: Set locale
+  shell: "localectl set-locale LANG={{ system_locale }}"
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Configure selinux
+  selinux:
+    policy: "{{ system_selinux_policy }}"
+    state: "{{ system_selinux_state }}"
+  when: ansible_facts.selinux.status == "enabled"

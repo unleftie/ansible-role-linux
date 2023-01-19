@@ -1,0 +1,35 @@
+---
+galaxy_info:
+  author: "none"
+  namespace: "none"
+  description: "Role for Linux setup"
+  company: "none"
+  license: "none"
+
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: Amazon Linux 2
+      versions:
+        - "all"
+    - name: EL
+      versions:
+        - "8"
+    - name: Debian
+      versions:
+        - "buster"
+        - "bullseye"
+    - name: Ubuntu
+      versions:
+        - "all"
+
+  galaxy_tags:
+    - firewall
+    - iptables
+    - ssh
+    - swap
+    - yum
+    - apt
+    - auditd
+
+dependencies: []

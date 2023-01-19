@@ -1,0 +1,54 @@
+---
+- name: Ensure Amazon repositories are enabled
+  shell: "amazon-linux-extras enable epel java-openjdk11 kernel-5.15 -y"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  when:
+    - ansible_distribution == "Amazon"
+    - ansible_distribution_major_version == "2"
+
+- name: Ensure yum cache are updated
+  yum:
+    update_cache: true
+  changed_when: false
+
+- name: Install epel package
+  yum:
+    state: present
+    name: epel-release
+  register: _progress_status
+  retries: 6
+  until: _progress_status is successful
+
+- name: Install dnf-automatic package
+  yum:
+    state: present
+    name: dnf-automatic
+  register: _progress_status
+  retries: 6
+  until: _progress_status is successful
+  when: ansible_pkg_mgr == "dnf"
+
+- name: Ensure yum cache are updated
+  yum:
+    update_cache: true
+  changed_when: false
+
+- name: Upgrade all packages
+  yum:
+    name: "*"
+    state: latest
+  register: _progress_status
+  retries: 6
+  until: _progress_status is successful
+  when: packages_upgrade_all | bool
+
+- name: Remove unused repositories
+  file:
+    name: "/etc/yum.repos.d/{{ item }}.repo"
+    state: "absent"
+  loop:
+    - "CentOS-Debuginfo"
+    - "CentOS-Media"
+    - "CentOS-Vault"

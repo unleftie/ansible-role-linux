@@ -1,0 +1,10 @@
+---
+command:
+  java:
+    exit-status: 0
+    exec: "java -version"
+{% if packages_install_jdk or packages_install_jdk_extra %}
+    skip: false
+{% else %}
+    skip: true
+{% endif %}
