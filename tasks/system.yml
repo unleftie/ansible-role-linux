@@ -8,7 +8,7 @@
     validate: "visudo -cf %s"
 
 - name: Change timezone
-  timezone:
+  community.general.timezone:
     name: "{{ system_timezone }}"
 
 - name: Add /etc/timezone file
@@ -34,7 +34,7 @@
   changed_when: false
 
 - name: Configure selinux
-  selinux:
+  ansible.posix.selinux:
     policy: "{{ system_selinux_policy }}"
     state: "{{ system_selinux_state }}"
   when: ansible_facts.selinux.status == "enabled"
