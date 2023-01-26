@@ -140,7 +140,7 @@
         ctstate: NEW,ESTABLISHED
         jump: ACCEPT
         limit: 2/minute
-        limit_burst: 8
+        limit_burst: 12
         comment: "limited ssh from external"
       notify: save_iptables_rules
 
