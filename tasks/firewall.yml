@@ -104,6 +104,18 @@
     comment: "dhcp client"
   notify: save_iptables_rules
 
+- name: Allow all internal connections
+  iptables:
+    chain: INPUT
+    state: present
+    source: "{{ firewall_internal_ip_pool }}"
+    destination: "{{ firewall_internal_ip_pool }}"
+    protocol: "all"
+    jump: ACCEPT
+    comment: "all internal connections"
+  notify: save_iptables_rules
+  when: firewall_allow_internal | bool
+
 - name: Allow icmp from external
   iptables:
     chain: INPUT
@@ -117,7 +129,6 @@
 
 - name: Limit ssh
   block:
-      # TODO: fix wrong interface
     - name: Allow ssh from internal
       iptables:
         chain: INPUT

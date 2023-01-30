@@ -40,3 +40,7 @@ firewall_reset_rules: false
 firewall_limit_ssh: true
 firewall_input_policy_drop: true
 firewall_forward_policy_drop: false
+
+firewall_allow_internal: false
+# TODO: use ansible internal variables
+firewall_internal_ip_pool: "10.0.0.0/16"
