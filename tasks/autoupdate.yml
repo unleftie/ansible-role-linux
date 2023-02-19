@@ -1,7 +1,7 @@
 ---
 - name: Configure autoupdates
   template:
-    src: "{{ item }}.j2"
+    src: "apt.conf.d/{{ item }}.j2"
     dest: "/etc/apt/apt.conf.d/{{ item }}"
     owner: "root"
     group: "root"
@@ -9,6 +9,7 @@
   with_items:
     - 20auto-upgrades
     - 50unattended-upgrades
+    - 02periodic
   when: ansible_pkg_mgr == "apt"
 
 - name: Set correct automatic update utility vars

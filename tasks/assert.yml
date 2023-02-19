@@ -49,3 +49,12 @@
   when:
     - user_configure | bool
     - user_names_list != []
+
+- name: test if packages_autoupdate_days_period is set correctly
+  assert:
+    that:
+      - packages_autoupdate_days_period is defined
+      - packages_autoupdate_days_period is number
+    fail_msg: "'packages_autoupdate_days_period' must be number"
+    quiet: true
+  when: packages_autoupdate_enabled | bool
