@@ -10,14 +10,6 @@
     goss_test_directory: "/tmp"
     goss_format: "tap"
   tasks:
-    - name: test output
-      shell: systemctl list-units --state failed
-      register: test
-
-    - name: test output
-      debug:
-        var: test.stdout_lines
-
     - name: Include defaults vars
       include_vars:
         dir: "../../defaults"

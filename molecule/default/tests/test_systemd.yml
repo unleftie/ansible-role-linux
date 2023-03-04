@@ -1,7 +1,18 @@
 ---
+{% if ansible_os_family == "RedHat" %}
+command:
+  systemctl list-units --state failed:
+    exit-status: 0
+    stderr:
+      or:
+        - []
+        - getty
+{% endif %}
+{% if ansible_os_family == "Debian" %}
 command:
   systemctl list-units --state failed:
     exit-status: 0
     stdout:
       - 0 loaded units listed
     stderr: []
+{% endif %}
