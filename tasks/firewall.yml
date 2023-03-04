@@ -127,49 +127,6 @@
   with_items: [3, 8, 11, 12, 13]
   notify: save_iptables_rules
 
-- name: Limit ssh
-  block:
-    - name: Allow ssh from internal
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        source: "{{ ansible_default_ipv4.address }}/24"
-        destination_port: "{{ ssh_port }}"
-        state: present
-        ctstate: NEW,ESTABLISHED
-        jump: ACCEPT
-        comment: "ssh from internal"
-      notify: save_iptables_rules
-
-    - name: Allow limited ssh from external
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        source: "0.0.0.0/0"
-        destination_port: "{{ ssh_port }}"
-        state: present
-        ctstate: NEW,ESTABLISHED
-        jump: ACCEPT
-        limit: 2/minute
-        limit_burst: 12
-        comment: "limited ssh from external"
-      notify: save_iptables_rules
-
-    - name: Log limited ssh from external
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        source: "0.0.0.0/0"
-        destination_port: "{{ ssh_port }}"
-        state: present
-        ctstate: NEW,ESTABLISHED
-        jump: LOG
-        log_prefix: "iptables:SSH BURST "
-        log_level: info
-        comment: "log limited ssh from external"
-      notify: save_iptables_rules
-  when: firewall_limit_ssh | bool
-
 - name: Allow ssh from all
   iptables:
     chain: INPUT
@@ -180,7 +137,6 @@
     ctstate: NEW,ESTABLISHED
     jump: ACCEPT
     comment: "ssh from external"
-  when: not firewall_limit_ssh
   notify: save_iptables_rules
 
 - name: Allow NAT

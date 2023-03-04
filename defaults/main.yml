@@ -1,15 +1,17 @@
 ---
 service_name: ""
 
-packages_upgrade_all: true
-packages_extra: true
-packages_install_jdk: true
+packages_upgrade_all: false
+packages_extra: false
+packages_install_jdk: false
 packages_install_jdk_extra: false
 
 packages_autoupdate_enabled: true
 packages_autoupdate_days_period: 7
+packages_autoupdate_automatic_reboot: false
+packages_autoupdate_for_all_packages: true
 
-system_hardening: true
+system_hardening: false
 system_log_all_commands: false
 sysctl_overwrite:
   # Disable IPv6 traffic
@@ -39,10 +41,8 @@ auditd_configure: false
 
 firewall_configure: true
 firewall_reset_rules: false
-firewall_limit_ssh: true
 firewall_input_policy_drop: true
 firewall_forward_policy_drop: false
-
 firewall_allow_internal: false
-# TODO: use ansible internal variables
+# TODO: get internal pool from ansible_all_ipv4_addresses
 firewall_internal_ip_pool: "10.0.0.0/16"
