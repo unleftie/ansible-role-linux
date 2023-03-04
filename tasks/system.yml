@@ -27,6 +27,11 @@
     - ansible_distribution == "Debian"
     - ansible_distribution_major_version in ["10", "11"]
 
+- name: Ensure systemd-logind service is in the right state
+  systemd:
+    name: systemd-logind
+    state: started
+
 - name: Set locale
   shell: "localectl set-locale LANG={{ system_locale }}"
   args:
