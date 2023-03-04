@@ -30,6 +30,15 @@
   until: _progress_status is successful
   when: ansible_pkg_mgr == "dnf"
 
+- name: Install yum-cron package
+  yum:
+    state: present
+    name: yum-cron
+  register: _progress_status
+  retries: 6
+  until: _progress_status is successful
+  when: ansible_pkg_mgr == "yum"
+
 - name: Ensure yum cache are updated
   yum:
     update_cache: true
