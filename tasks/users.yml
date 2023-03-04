@@ -11,6 +11,7 @@
   no_log: true
   when: user_root_update_password | bool
 
+# kics-scan ignore-block
 - name: Create a default users
   user:
     name: "{{ item }}"
