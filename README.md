@@ -1,20 +1,21 @@
-# Role for Linux setup
+# Role for linux setup
+
+[![Ansible CI](https://github.com/unleftie/ansible-role-linux/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/ansible-ci.yml)
+[![Checkmarx KICS](https://github.com/unleftie/ansible-role-linux/actions/workflows/checkmarx-kics.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/checkmarx-kics.yml)
 
 ## Compatibility
 
-| Platform       | Version |
-| -------------- | ------- |
-| debian         | 11      |
-| el (rocky)     | 8       |
-| amazon linux 2 | all     |
+| Platform   | Version |
+| ---------- | ------- |
+| debian     | 11      |
+| el (rocky) | 9       |
+| ubuntu     | 22.04   |
 
 ## Dependencies
 
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (v2.12+)
-- password_hash Ansible filter ("apt install python3-passlib -y" for Debian/Ubuntu)
-- [Molecule](https://molecule.readthedocs.io/en/latest/installation.html) (for local testing)
-- [Vagrant](https://www.vagrantup.com/downloads) (for local testing)
-- [VirtualBox](https://www.virtualbox.org/wiki/Downloads) (for local testing)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (v2.14+)
+- [Molecule](https://molecule.readthedocs.io/en/latest/installation.html) (v4.0.4+) (for local testing)
+- [Docker](https://docs.docker.com/get-docker/) (for local testing)
 
 ## Local Testing
 
@@ -78,7 +79,6 @@ To deploy the Linux on hosts, add the Datadog role to your playbook. Below are s
 | `auditd_configure`             | Whether to provide numerous auditd-related configurations                            | true/false |
 | `firewall_configure`           | Whether to provide numerous firewall-related configurations                          | true/false |
 | `firewall_reset_rules`         | Whether to reset iptables rules list on every run                                    | true/false |
-| `firewall_limit_ssh`           | Whether to restict SSH connections with iptables                                     | true/false |
 | `firewall_input_policy_drop`   | Whether to switch iptables INPUT policy to DROP                                      | true/false |
 | `firewall_forward_policy_drop` | Whether to switch iptables FORWARD policy to DROP                                    | true/false |
 | `packages_unnecessary_list`    | List of packages to be removed                                                       |

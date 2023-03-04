@@ -4,15 +4,8 @@
   become: true
   environment:
     PATH: "{{ ansible_env.PATH }}:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
-  vars:
-    vault_root_password: "teSt_passw0rd"
-    vault_user_initial_password: "teSt_passw0rd"
-  pre_tasks:
-    - name: Ensure apt cache are updated
-      apt:
-        update_cache: true
-        cache_valid_time: 3600
-      when: ansible_os_family == "Debian"
   tasks:
     - include_role:
-        name: "linux"
+        name: "ansible-role-linux"
+      vars:
+        swap_configure: false
