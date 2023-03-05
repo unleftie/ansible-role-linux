@@ -7,7 +7,6 @@
 - name: restart_auditd
   command:
     cmd: "service auditd restart" # rhel: see: https://access.redhat.com/solutions/2664811
-    warn: false
 
 - name: save_iptables_rules
   community.general.iptables_state:
