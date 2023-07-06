@@ -5,7 +5,15 @@ on:
       runKics:
         description: Run KICS scan
         type: boolean
-        default: false
+        default: true
+      runLint:
+        description: Run Ansible Lint
+        type: boolean
+        default: true
+      runMolecule:
+        description: Run Ansible Molecule
+        type: boolean
+        default: true
   push:
     paths-ignore:
       - README.md
@@ -23,7 +31,11 @@ jobs:
     name: Checkmarx KICS
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: inputs.runKics == true || github.event_name == 'push'
+    if: |
+      inputs.runKics == true || 
+      github.event_name == 'push' || 
+      github.event_name == 'pull_request' || 
+      github.event_name == 'schedule'
     permissions:
       contents: read # for actions/checkout to fetch code
       issues: write # for checkmarx/kics-github-action to write feedback to github issues
@@ -46,3 +58,54 @@ jobs:
         uses: ./gha_templates/checkmarx-kics
         with:
           path: "tasks"
+
+  lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: |
+      inputs.runLint == true || 
+      github.event_name == 'push' || 
+      github.event_name == 'pull_request' || 
+      github.event_name == 'schedule'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Checkout actions repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository_owner }}/${{ env.ACTIONS_REPOSITORY }}
+          token: ${{ secrets.GHA_TOKEN }}
+          path: gha_templates
+          fetch-depth: 0
+
+      - name: Run Ansible Lint
+        uses: ./gha_templates/ansible-lint
+
+  molecule:
+    name: Ansible Molecule
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: |
+      inputs.runMolecule == true || 
+      github.event_name == 'push' || 
+      github.event_name == 'pull_request' || 
+      github.event_name == 'schedule'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Checkout actions repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository_owner }}/${{ env.ACTIONS_REPOSITORY }}
+          token: ${{ secrets.GHA_TOKEN }}
+          path: gha_templates
+          fetch-depth: 0
+
+      - name: Run Ansible Molecule
+        uses: ./gha_templates/ansible-molecule
+        with:
+          gha_token: ${{ secrets.GHA_TOKEN }}
+          role_name: ${{ github.event.repository.name }}
