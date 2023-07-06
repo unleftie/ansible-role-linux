@@ -46,3 +46,4 @@ jobs:
         uses: ./gha_templates/checkmarx-kics
         with:
           path: "tasks"
+          uploadReport: true
