@@ -20,7 +20,7 @@ sysctl_overwrite:
   vm.swappiness: "{{ swap_swappiness_value }}"
 
 system_configure: true
-system_timezone: "Europe/Kiev"
+system_timezone: "Europe/Kyiv"
 
 user_configure: false
 user_root_update_password: false
