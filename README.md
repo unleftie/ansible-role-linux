@@ -1,7 +1,6 @@
 # Role for linux setup
 
-[![Ansible CI](https://github.com/unleftie/ansible-role-linux/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/ansible-ci.yml)
-[![Checkmarx KICS](https://github.com/unleftie/ansible-role-linux/actions/workflows/checkmarx-kics.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/checkmarx-kics.yml)
+[![CI](https://github.com/unleftie/ansible-role-linux/actions/workflows/ci.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/ci.yml)
 
 ## Compatibility
 
