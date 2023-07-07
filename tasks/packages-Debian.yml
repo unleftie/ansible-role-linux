@@ -1,5 +1,4 @@
 ---
-# TODO: remove backport repo from /etc/apt/sources.list
 - name: Ensure backports repository is set
   apt_repository:
     repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"

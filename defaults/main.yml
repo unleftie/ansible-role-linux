@@ -11,7 +11,7 @@ packages_autoupdate_days_period: 7
 packages_autoupdate_automatic_reboot: false
 packages_autoupdate_for_all_packages: true
 
-system_hardening: false
+system_hardening: true
 system_log_all_commands: false
 sysctl_overwrite:
   # Disable IPv6 traffic
@@ -43,6 +43,6 @@ firewall_configure: true
 firewall_reset_rules: false
 firewall_input_policy_drop: true
 firewall_forward_policy_drop: false
-firewall_allow_internal: false
+firewall_allow_internal: true
 # TODO: get internal pool from ansible_all_ipv4_addresses
 firewall_internal_ip_pool: "10.0.0.0/16"
