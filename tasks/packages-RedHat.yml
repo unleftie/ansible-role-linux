@@ -18,7 +18,8 @@
     state: present
     name: epel-release
   register: _progress_status
-  retries: 6
+  delay: 5
+  retries: 5
   until: _progress_status is successful
 
 - name: Install dnf-automatic package
@@ -26,7 +27,8 @@
     state: present
     name: dnf-automatic
   register: _progress_status
-  retries: 6
+  delay: 5
+  retries: 5
   until: _progress_status is successful
   when: ansible_pkg_mgr == "dnf"
 
@@ -35,7 +37,8 @@
     state: present
     name: yum-cron
   register: _progress_status
-  retries: 6
+  delay: 5
+  retries: 5
   until: _progress_status is successful
   when: ansible_pkg_mgr == "yum"
 
@@ -49,7 +52,8 @@
     name: "*"
     state: latest
   register: _progress_status
-  retries: 6
+  delay: 5
+  retries: 5
   until: _progress_status is successful
   when: packages_upgrade_all | bool
 
