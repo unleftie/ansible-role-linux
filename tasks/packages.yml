@@ -11,6 +11,7 @@
     name: "{{ packages_unnecessary_list | default(omit, true) }}"
   register: _progress_status
   until: _progress_status is succeeded
+  delay: 3
   retries: 5
 
 - name: Install default java packages
@@ -19,6 +20,7 @@
     name: "{{ packages_jdk_list | default(omit, true) }}"
   register: _progress_status
   until: _progress_status is succeeded
+  delay: 3
   retries: 5
   when: packages_install_jdk | bool
 
@@ -28,6 +30,7 @@
     name: "{{ packages_jdk_extra_list | default(omit, true) }}"
   register: _progress_status
   until: _progress_status is succeeded
+  delay: 3
   retries: 5
   when: packages_install_jdk_extra | bool
 
@@ -60,6 +63,7 @@
   with_items: "{{ packages_required_list | default(omit, true) }}"
   register: _progress_status
   until: _progress_status is succeeded
+  delay: 3
   retries: 5
 
 - name: Install extra list of packages
@@ -76,5 +80,6 @@
       - nmap
   register: _progress_status
   until: _progress_status is succeeded
+  delay: 3
   retries: 5
   when: packages_extra | bool
