@@ -26,3 +26,18 @@
       until: _progress_status is succeeded
       delay: 5
       retries: 5
+
+    - name: Ensure required dependencies are present
+      package:
+        name: openssh-server
+        state: present
+      register: _progress_status
+      until: _progress_status is succeeded
+      delay: 5
+      retries: 5
+
+    - name: Ensure required services are in the right state
+      systemd:
+        name: "{{ item }}"
+        state: started
+      with_items: ["sshd"]
