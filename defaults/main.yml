@@ -7,6 +7,7 @@ packages_install_jdk: false
 packages_install_jdk_extra: false
 
 packages_autoupdate_enabled: true
+# every n-days at 05:00-07:00 AM
 packages_autoupdate_days_period: 7
 packages_autoupdate_automatic_reboot: false
 packages_autoupdate_for_all_packages: true
