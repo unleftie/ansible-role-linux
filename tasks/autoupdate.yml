@@ -10,11 +10,13 @@
     - 20auto-upgrades
     - 50unattended-upgrades
     - 02periodic
+  notify: restart_unattended_upgrades
   when: ansible_pkg_mgr == "apt"
 
 - name: Set correct automatic update utility vars
   set_fact:
     update_service: unattended-upgrades
+  notify: restart_unattended_upgrades
   when: ansible_pkg_mgr == "apt"
 
 - name: Set correct automatic update utility vars
