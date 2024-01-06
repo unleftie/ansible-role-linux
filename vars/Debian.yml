@@ -31,11 +31,11 @@ os_useradd_mail_dir: "/var/mail"
 os_useradd_create_home: true
 
 sysctl_custom_config:
-  # Mitigation of vulnerability CVE-2021-33909
-  kernel.unprivileged_userns_clone: 0
+  # user.max_user_namespaces: 0
   # Restrict FIFO special device creation behavior
-  # The value cannot be changed to 2
   fs.protected_fifos: 1
+  # enable ping from rootless docker
+  # net.ipv4.ping_group_range: 0 2147483647
 
 package_modprobe: "kmod"
 package_auditd: "auditd"
