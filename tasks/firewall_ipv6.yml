@@ -94,25 +94,23 @@
     ip_version: "ipv6"
     chain: INPUT
     state: present
-    source: "{{ firewall_internal_ip_pool }}"
-    destination: "{{ firewall_internal_ip_pool }}"
+    source: "{{ firewall_internal_ipv6_ip_pool }}"
+    destination: "{{ firewall_internal_ipv6_ip_pool }}"
     protocol: "all"
     jump: ACCEPT
     comment: "all internal connections"
   notify: save_iptables_rules
   when: firewall_allow_internal | bool
 
-# - name: Allow icmp from external
-#   iptables:
-#     ip_version: "ipv6"
-#     chain: INPUT
-#     state: present
-#     protocol: icmp
-#     icmp_type: "{{ item }}"
-#     jump: ACCEPT
-#     comment: "icmp type {{ item }}"
-#   with_items: [3, 8, 11, 12, 13]
-#   notify: save_iptables_rules
+- name: Allow icmp from external
+  iptables:
+    ip_version: "ipv6"
+    chain: INPUT
+    state: present
+    protocol: icmpv6
+    jump: ACCEPT
+    comment: "icmpv6"
+  notify: save_iptables_rules
 
 - name: Allow ssh from all
   iptables:
