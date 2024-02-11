@@ -15,8 +15,9 @@ packages_autoupdate_for_all_packages: true
 system_hardening: true
 system_log_all_commands: false
 sysctl_overwrite:
-  # Disable IPv6 traffic
-  # net.ipv6.conf.all.disable_ipv6: 0
+  # IPv6 traffic (1 - disabled, 0 - enabled)
+  # net.ipv6.conf.all.disable_ipv6: 1
+  # net.ipv6.conf.default.disable_ipv6: 1
   # Set swappiness value
   vm.swappiness: "{{ swap_swappiness_value }}"
 
