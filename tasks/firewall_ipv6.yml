@@ -1,0 +1,138 @@
+---
+- name: Reset rules
+  block:
+    - name: Set the policy for the all chains in table filter to ACCEPT
+      iptables:
+        chain: "{{ item }}"
+        policy: ACCEPT
+        table: filter
+      with_items: ["INPUT", "OUTPUT", "FORWARD"]
+
+    - name: Set the policy for the all chains in table nat to ACCEPT
+      iptables:
+        chain: "{{ item }}"
+        policy: ACCEPT
+        table: nat
+      with_items: ["PREROUTING", "POSTROUTING"]
+
+    - name: Flush default rules in table filter
+      iptables:
+        chain: "{{ item }}"
+        flush: true
+        table: filter
+      with_items: ["INPUT", "OUTPUT", "FORWARD"]
+
+    - name: Flush default rules in table filter
+      iptables:
+        chain: "{{ item }}"
+        flush: true
+        table: nat
+      with_items: ["PREROUTING", "POSTROUTING"]
+  when: firewall_reset_rules | bool
+  notify: save_iptables_rules
+
+- name: Allow loopback interface for INPUT
+  iptables:
+    chain: INPUT
+    in_interface: lo
+    state: present
+    jump: ACCEPT
+    comment: "loopback interface"
+  notify: save_iptables_rules
+
+- name: Allow loopback interface for OUTPUT
+  iptables:
+    chain: OUTPUT
+    out_interface: lo
+    state: present
+    jump: ACCEPT
+    comment: "loopback interface"
+  notify: save_iptables_rules
+
+# quickly process packets for which we already have a connection
+- name: Allow connections with ESTABLISHED and RELATED state
+  iptables:
+    chain: "{{ item }}"
+    state: present
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    comment: "established and related state"
+  with_items: ["INPUT", "OUTPUT"]
+  notify: save_iptables_rules
+
+- name: Drop connections with INVALID state
+  iptables:
+    chain: INPUT
+    state: present
+    ctstate: INVALID
+    jump: DROP
+    comment: "invalid state"
+  notify: save_iptables_rules
+
+- name: Allow dhcp client
+  iptables:
+    chain: INPUT
+    state: present
+    source_port: 67
+    destination_port: 68
+    protocol: udp
+    jump: ACCEPT
+    comment: "dhcp client"
+  notify: save_iptables_rules
+
+- name: Allow all internal connections
+  iptables:
+    chain: INPUT
+    state: present
+    source: "{{ firewall_internal_ip_pool }}"
+    destination: "{{ firewall_internal_ip_pool }}"
+    protocol: "all"
+    jump: ACCEPT
+    comment: "all internal connections"
+  notify: save_iptables_rules
+  when: firewall_allow_internal | bool
+
+- name: Allow icmp from external
+  iptables:
+    chain: INPUT
+    state: present
+    protocol: icmp
+    icmp_type: "{{ item }}"
+    jump: ACCEPT
+    comment: "icmp type {{ item }}"
+  with_items: [3, 8, 11, 12, 13]
+  notify: save_iptables_rules
+
+- name: Allow ssh from all
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    source: "0.0.0.0/0"
+    destination_port: "{{ ssh_port }}"
+    state: present
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: "ssh from external"
+  notify: save_iptables_rules
+
+- name: Allow NAT
+  iptables:
+    chain: POSTROUTING
+    table: nat
+    out_interface: "{{ ansible_default_ipv4.interface }}"
+    state: present
+    jump: MASQUERADE
+    comment: "default nat"
+  notify: save_iptables_rules
+
+- name: Set the policy for the INPUT chain to DROP
+  iptables:
+    chain: INPUT
+    policy: DROP
+  when: firewall_input_policy_drop | bool
+
+- name: Set the policy for the FORWARD chain to DROP
+  iptables:
+    chain: FORWARD
+    policy: DROP
+  when: firewall_forward_policy_drop | bool
