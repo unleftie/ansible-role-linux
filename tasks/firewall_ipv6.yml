@@ -3,6 +3,7 @@
   block:
     - name: Set the policy for the all chains in table filter to ACCEPT
       iptables:
+        ip_version: "ipv6"
         chain: "{{ item }}"
         policy: ACCEPT
         table: filter
@@ -10,6 +11,7 @@
 
     - name: Set the policy for the all chains in table nat to ACCEPT
       iptables:
+        ip_version: "ipv6"
         chain: "{{ item }}"
         policy: ACCEPT
         table: nat
@@ -17,6 +19,7 @@
 
     - name: Flush default rules in table filter
       iptables:
+        ip_version: "ipv6"
         chain: "{{ item }}"
         flush: true
         table: filter
@@ -24,6 +27,7 @@
 
     - name: Flush default rules in table filter
       iptables:
+        ip_version: "ipv6"
         chain: "{{ item }}"
         flush: true
         table: nat
@@ -33,6 +37,7 @@
 
 - name: Allow loopback interface for INPUT
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     in_interface: lo
     state: present
@@ -42,6 +47,7 @@
 
 - name: Allow loopback interface for OUTPUT
   iptables:
+    ip_version: "ipv6"
     chain: OUTPUT
     out_interface: lo
     state: present
@@ -52,6 +58,7 @@
 # quickly process packets for which we already have a connection
 - name: Allow connections with ESTABLISHED and RELATED state
   iptables:
+    ip_version: "ipv6"
     chain: "{{ item }}"
     state: present
     ctstate: ESTABLISHED,RELATED
@@ -62,6 +69,7 @@
 
 - name: Drop connections with INVALID state
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     state: present
     ctstate: INVALID
@@ -71,6 +79,7 @@
 
 - name: Allow dhcp client
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     state: present
     source_port: 67
@@ -82,6 +91,7 @@
 
 - name: Allow all internal connections
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     state: present
     source: "{{ firewall_internal_ip_pool }}"
@@ -92,22 +102,24 @@
   notify: save_iptables_rules
   when: firewall_allow_internal | bool
 
-- name: Allow icmp from external
-  iptables:
-    chain: INPUT
-    state: present
-    protocol: icmp
-    icmp_type: "{{ item }}"
-    jump: ACCEPT
-    comment: "icmp type {{ item }}"
-  with_items: [3, 8, 11, 12, 13]
-  notify: save_iptables_rules
+# - name: Allow icmp from external
+#   iptables:
+#     ip_version: "ipv6"
+#     chain: INPUT
+#     state: present
+#     protocol: icmp
+#     icmp_type: "{{ item }}"
+#     jump: ACCEPT
+#     comment: "icmp type {{ item }}"
+#   with_items: [3, 8, 11, 12, 13]
+#   notify: save_iptables_rules
 
 - name: Allow ssh from all
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     protocol: tcp
-    source: "0.0.0.0/0"
+    source: "::/0"
     destination_port: "{{ ssh_port }}"
     state: present
     ctstate: NEW,ESTABLISHED
@@ -117,22 +129,26 @@
 
 - name: Allow NAT
   iptables:
+    ip_version: "ipv6"
     chain: POSTROUTING
     table: nat
-    out_interface: "{{ ansible_default_ipv4.interface }}"
+    out_interface: "{{ ansible_default_ipv6.interface }}"
     state: present
     jump: MASQUERADE
     comment: "default nat"
+  when: firewall_ipv6_nat | bool
   notify: save_iptables_rules
 
 - name: Set the policy for the INPUT chain to DROP
   iptables:
+    ip_version: "ipv6"
     chain: INPUT
     policy: DROP
   when: firewall_input_policy_drop | bool
 
 - name: Set the policy for the FORWARD chain to DROP
   iptables:
+    ip_version: "ipv6"
     chain: FORWARD
     policy: DROP
   when: firewall_forward_policy_drop | bool

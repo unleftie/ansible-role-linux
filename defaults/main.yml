@@ -44,6 +44,8 @@ firewall_configure: true
 firewall_reset_rules: false
 firewall_input_policy_drop: true
 firewall_forward_policy_drop: true
+firewall_ipv4_nat: true
+firewall_ipv6_nat: false
 firewall_allow_internal: false
 # TODO: get internal pool from ansible_all_ipv4_addresses
 firewall_internal_ip_pool: "10.0.0.0/16"

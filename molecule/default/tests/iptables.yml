@@ -22,3 +22,11 @@ command:
 {% else %}
     skip: true
 {% endif %}
+  ip6tables:
+    exit-status: 0
+    exec: "ip6tables -nL"
+{% if firewall_configure %}
+    skip: false
+{% else %}
+    skip: true
+{% endif %}

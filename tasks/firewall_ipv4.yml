@@ -148,6 +148,7 @@
     state: present
     jump: MASQUERADE
     comment: "default nat"
+  when: firewall_ipv4_nat | bool
   notify: save_iptables_rules
 
 - name: Set the policy for the INPUT chain to DROP
