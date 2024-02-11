@@ -1,7 +1,7 @@
 ---
-- name: Reset rules
+- name: Reset rules (ipv6)
   block:
-    - name: Set the policy for the all chains in table filter to ACCEPT
+    - name: Set the policy for the all chains in table filter to ACCEPT (ipv6)
       iptables:
         ip_version: "ipv6"
         chain: "{{ item }}"
@@ -9,7 +9,7 @@
         table: filter
       with_items: ["INPUT", "OUTPUT", "FORWARD"]
 
-    - name: Set the policy for the all chains in table nat to ACCEPT
+    - name: Set the policy for the all chains in table nat to ACCEPT (ipv6)
       iptables:
         ip_version: "ipv6"
         chain: "{{ item }}"
@@ -17,7 +17,7 @@
         table: nat
       with_items: ["PREROUTING", "POSTROUTING"]
 
-    - name: Flush default rules in table filter
+    - name: Flush default rules in table filter (ipv6)
       iptables:
         ip_version: "ipv6"
         chain: "{{ item }}"
@@ -25,7 +25,7 @@
         table: filter
       with_items: ["INPUT", "OUTPUT", "FORWARD"]
 
-    - name: Flush default rules in table filter
+    - name: Flush default rules in table filter (ipv6)
       iptables:
         ip_version: "ipv6"
         chain: "{{ item }}"
@@ -35,7 +35,7 @@
   when: firewall_reset_rules | bool
   notify: save_iptables_rules
 
-- name: Allow loopback interface for INPUT
+- name: Allow loopback interface for INPUT (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
@@ -45,7 +45,7 @@
     comment: "loopback interface"
   notify: save_iptables_rules
 
-- name: Allow loopback interface for OUTPUT
+- name: Allow loopback interface for OUTPUT (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: OUTPUT
@@ -56,7 +56,7 @@
   notify: save_iptables_rules
 
 # quickly process packets for which we already have a connection
-- name: Allow connections with ESTABLISHED and RELATED state
+- name: Allow connections with ESTABLISHED and RELATED state (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: "{{ item }}"
@@ -67,7 +67,7 @@
   with_items: ["INPUT", "OUTPUT"]
   notify: save_iptables_rules
 
-- name: Drop connections with INVALID state
+- name: Drop connections with INVALID state (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
@@ -77,32 +77,33 @@
     comment: "invalid state"
   notify: save_iptables_rules
 
-- name: Allow dhcp client
+- name: Allow dhcp client (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
     state: present
-    source_port: 67
-    destination_port: 68
+    source_port: 547
+    destination_port: 546
     protocol: udp
     jump: ACCEPT
     comment: "dhcp client"
+  when: firewall_dhcp_client_allow | bool
   notify: save_iptables_rules
 
-- name: Allow all internal connections
+- name: Allow all internal connections (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
     state: present
-    source: "{{ firewall_internal_ipv6_ip_pool }}"
-    destination: "{{ firewall_internal_ipv6_ip_pool }}"
+    source: "{{ firewall_ipv6_internal_ip_pool }}"
+    destination: "{{ firewall_ipv6_internal_ip_pool }}"
     protocol: "all"
     jump: ACCEPT
     comment: "all internal connections"
   notify: save_iptables_rules
-  when: firewall_allow_internal | bool
+  when: firewall_ipv6_allow_internal | bool
 
-- name: Allow icmp from external
+- name: Allow icmp from external (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
@@ -112,12 +113,11 @@
     comment: "icmpv6"
   notify: save_iptables_rules
 
-- name: Allow ssh from all
+- name: Allow ssh from all (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
     protocol: tcp
-    source: "::/0"
     destination_port: "{{ ssh_port }}"
     state: present
     ctstate: NEW,ESTABLISHED
@@ -125,7 +125,7 @@
     comment: "ssh from external"
   notify: save_iptables_rules
 
-- name: Allow NAT
+- name: Allow NAT (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: POSTROUTING
@@ -137,14 +137,14 @@
   when: firewall_ipv6_nat | bool
   notify: save_iptables_rules
 
-- name: Set the policy for the INPUT chain to DROP
+- name: Set the policy for the INPUT chain to DROP (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: INPUT
     policy: DROP
   when: firewall_input_policy_drop | bool
 
-- name: Set the policy for the FORWARD chain to DROP
+- name: Set the policy for the FORWARD chain to DROP (ipv6)
   iptables:
     ip_version: "ipv6"
     chain: FORWARD

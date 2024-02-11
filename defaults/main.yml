@@ -7,7 +7,7 @@ packages_install_jdk: false
 packages_install_jdk_extra: false
 
 packages_autoupdate_enabled: true
-# every n-days at 05:00-07:00 AM
+# every n-days at 7 AM
 packages_autoupdate_days_period: 7
 packages_autoupdate_automatic_reboot: true
 packages_autoupdate_for_all_packages: true
@@ -42,11 +42,16 @@ auditd_configure: false
 
 firewall_configure: true
 firewall_reset_rules: false
+firewall_dhcp_client_allow: true
 firewall_input_policy_drop: true
 firewall_forward_policy_drop: true
+
+# ipv4
 firewall_ipv4_nat: true
+firewall_ipv4_allow_internal: true
+firewall_ipv4_internal_ip_pool: "10.0.0.0/16"
+
+# ipv6
 firewall_ipv6_nat: false
-firewall_allow_internal: false
-# TODO: get internal pool from ansible_all_ipv4_addresses
-firewall_internal_ipv4_ip_pool: "10.0.0.0/16"
-firewall_internal_ipv6_ip_pool: "fe80::8400:ff:fe6e:9a71/64"
+firewall_ipv6_allow_internal: false
+firewall_ipv6_internal_ip_pool: "fc00::/7"

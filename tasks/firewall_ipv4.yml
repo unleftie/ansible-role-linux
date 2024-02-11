@@ -103,19 +103,20 @@
     protocol: udp
     jump: ACCEPT
     comment: "dhcp client"
+  when: firewall_dhcp_client_allow | bool
   notify: save_iptables_rules
 
 - name: Allow all internal connections
   iptables:
     chain: INPUT
     state: present
-    source: "{{ firewall_internal_ipv4_ip_pool }}"
-    destination: "{{ firewall_internal_ipv4_ip_pool }}"
+    source: "{{ firewall_ipv4_internal_ip_pool }}"
+    destination: "{{ firewall_ipv4_internal_ip_pool }}"
     protocol: "all"
     jump: ACCEPT
     comment: "all internal connections"
+  when: firewall_ipv4_allow_internal | bool
   notify: save_iptables_rules
-  when: firewall_allow_internal | bool
 
 - name: Allow icmp from external
   iptables:
@@ -132,7 +133,6 @@
   iptables:
     chain: INPUT
     protocol: tcp
-    source: "0.0.0.0/0"
     destination_port: "{{ ssh_port }}"
     state: present
     ctstate: NEW,ESTABLISHED
