@@ -6,7 +6,7 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  with_items:
+  loop:
     - 20auto-upgrades
     - 50unattended-upgrades
     - 02periodic

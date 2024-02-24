@@ -87,16 +87,16 @@
       command: "{{ goss_dst }} -g {{ item }} validate -f {{ goss_format }}"
       changed_when: false
       register: test_results
-      with_items: "{{ test_files.stdout_lines }}"
+      loop: "{{ test_files.stdout_lines }}"
       ignore_errors: true
 
     - name: Display details about the results
       debug:
         msg: "{{ item.stdout_lines }}"
-      with_items: "{{ test_results.results }}"
+      loop: "{{ test_results.results }}"
 
     - name: Fail when tests fail
       fail:
         msg: "Goss failed to validate"
       when: item.rc != 0
-      with_items: "{{ test_results.results }}"
+      loop: "{{ test_results.results }}"

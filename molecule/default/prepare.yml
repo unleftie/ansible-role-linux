@@ -40,4 +40,4 @@
       systemd:
         name: "{{ item }}"
         state: started
-      with_items: ["sshd"]
+      loop: ["sshd"]

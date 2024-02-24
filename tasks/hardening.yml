@@ -61,7 +61,7 @@
     owner: root
     group: root
     mode: og-rwx
-  with_items: "{{ cron_directories.files }}"
+  loop: "{{ cron_directories.files }}"
 
 - name: Find shadow files
   stat:

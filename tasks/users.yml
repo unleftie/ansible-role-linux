@@ -25,7 +25,7 @@
       - root
     state: present
   no_log: true
-  with_items: "{{ user_names_list }}"
+  loop: "{{ user_names_list }}"
   when: user_names_list != []
 
 # Any member of this group will have the ability to run ALL commands as any user on ALL hosts, so long as the root password is known
