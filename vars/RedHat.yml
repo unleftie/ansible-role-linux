@@ -36,15 +36,7 @@ package_modprobe: "module-init-tools"
 package_auditd: "audit"
 
 packages_required_list:
-  [
-    "yum-utils",
-    "iptables-services",
-    "util-linux-user",
-    "langpacks-en",
-    "glibc-all-langpacks",
-  ]
+  ["yum-utils", "util-linux-user", "langpacks-en", "glibc-all-langpacks"]
 
 packages_jdk_list: ["java-11-openjdk"]
 packages_jdk_extra_list: ["java-1.8.0-openjdk", "java-latest-openjdk"]
-
-iptables_persistent_service: "iptables"

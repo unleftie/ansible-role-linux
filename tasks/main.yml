@@ -47,6 +47,3 @@
 
 - include_tasks: auditd.yml
   when: auditd_configure | bool
-
-- include_tasks: firewall.yml
-  when: firewall_configure | bool

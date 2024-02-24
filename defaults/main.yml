@@ -40,19 +40,3 @@ swap_configure: true
 swap_size: 513
 
 auditd_configure: false
-
-firewall_configure: true
-firewall_reset_rules: false
-firewall_dhcp_client_allow: true
-firewall_input_policy_drop: true
-firewall_forward_policy_drop: true
-
-# ipv4
-firewall_ipv4_nat: true
-firewall_ipv4_allow_internal: false
-firewall_ipv4_internal_ip_pool: "10.0.0.0/16"
-
-# ipv6
-firewall_ipv6_nat: false
-firewall_ipv6_allow_internal: false
-firewall_ipv6_internal_ip_pool: "fc00::/7"

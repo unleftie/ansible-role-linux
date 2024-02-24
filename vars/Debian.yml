@@ -42,7 +42,6 @@ package_auditd: "auditd"
 
 packages_required_list:
   [
-    "iptables-persistent",
     "gnupg-agent",
     "software-properties-common",
     "locales",
@@ -55,5 +54,3 @@ packages_required_list:
 
 packages_jdk_list: ["openjdk-11-jdk"]
 packages_jdk_extra_list: ["openjdk-8-jdk", "openjdk-17-jdk"]
-
-iptables_persistent_service: "netfilter-persistent"

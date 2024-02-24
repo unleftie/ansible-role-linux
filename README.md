@@ -66,10 +66,6 @@ To deploy the Linux on hosts, add the Datadog role to your playbook. Below are s
 | `swap_file_path`               | Swap file path                                                                       |
 | `swap_swappiness_value`        | Rate at which kernel moves pages into and out of active RAM                          | 0-100 (%)  |
 | `auditd_configure`             | Whether to provide numerous auditd-related configurations                            | true/false |
-| `firewall_configure`           | Whether to provide numerous firewall-related configurations                          | true/false |
-| `firewall_reset_rules`         | Whether to reset iptables rules list on every run                                    | true/false |
-| `firewall_input_policy_drop`   | Whether to switch iptables INPUT policy to DROP                                      | true/false |
-| `firewall_forward_policy_drop` | Whether to switch iptables FORWARD policy to DROP                                    | true/false |
 | `packages_unnecessary_list`    | List of packages to be removed                                                       |
 | `os_security_auto_logout`      | Timeout for logout users automatically after time. Set to `0` to disable the timeout | 0-x (sec)  |
 | `os_unused_filesystems`        | List of filesystems to be disabled                                                   |
