@@ -50,4 +50,3 @@
 
 - include_tasks: firewall.yml
   when: firewall_configure | bool
-
