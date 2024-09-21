@@ -1,4 +1,4 @@
-# Role for linux setup
+# Ansible Role for linux setup
 
 [![CI](https://github.com/unleftie/ansible-role-linux/actions/workflows/ci.yml/badge.svg)](https://github.com/unleftie/ansible-role-linux/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/unleftie/ansible-role-zsh/badge)](https://securityscorecards.dev/viewer/?uri=github.com/unleftie/ansible-role-linux)
