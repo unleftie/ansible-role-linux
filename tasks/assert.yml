@@ -10,46 +10,6 @@
     quiet: true
   when: swap_configure | bool
 
-- name: test if ssh_permit_root_login is set correctly
-  assert:
-    that:
-      - ssh_permit_root_login is defined
-      - ssh_permit_root_login is string
-      - ssh_permit_root_login in ["yes", "no", "forced-commands-only", "prohibit-password"]
-    quiet: true
-  when: ssh_configure | bool
-
-- name: test if ssh_port is set correctly
-  assert:
-    that:
-      - ssh_port is defined
-      - ssh_port is number
-      - ssh_port >= 0
-      - ssh_port < 65536
-    fail_msg: "'ssh_port' must be between 0 and 65536"
-    quiet: true
-  when: ssh_configure | bool
-
-- name: test if user_root_password is set correctly
-  assert:
-    that:
-      - user_root_password is defined
-      - user_root_password is string
-    quiet: true
-  when:
-    - user_configure | bool
-    - user_root_update_password | bool
-
-- name: test if user_initial_password is set correctly
-  assert:
-    that:
-      - user_initial_password is defined
-      - user_initial_password is string
-    quiet: true
-  when:
-    - user_configure | bool
-    - user_names_list != []
-
 - name: test if packages_autoupdate_days_period is set correctly
   assert:
     that:

@@ -27,23 +27,8 @@
 - include_tasks: autoupdate.yml
   when: packages_autoupdate_enabled | bool
 
-- include_tasks: snoopy.yml
-  when: system_log_all_commands | bool
-
-- include_tasks: hardening.yml
-  when: system_hardening | bool
-
 - include_tasks: system.yml
   when: system_configure | bool
 
-- include_tasks: users.yml
-  when: user_configure | bool
-
-- include_tasks: ssh.yml
-  when: ssh_configure | bool
-
 - include_tasks: swap.yml
   when: swap_configure | bool
-
-- include_tasks: auditd.yml
-  when: auditd_configure | bool

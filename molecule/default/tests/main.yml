@@ -4,32 +4,3 @@ interface:
     exists: true
   lo:
     exists: true
-file:
-  /etc/passwd:
-    exists: true
-    mode: "0644"
-    owner: root
-    group: root
-    filetype: file
-  /etc/hosts:
-    exists: true
-    mode: "0644"
-    owner: root
-    group: root
-    filetype: file
-{% if ansible_os_family == "RedHat" %}
-  /etc/shadow:
-    exists: true
-    mode: "0000"
-    owner: root
-    group: root
-    filetype: file
-{% endif %}
-{% if ansible_os_family == "Debian" %}
-  /etc/shadow:
-    exists: true
-    mode: "0640"
-    owner: root
-    group: shadow
-    filetype: file
-{% endif %}

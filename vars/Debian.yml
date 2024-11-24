@@ -1,45 +1,4 @@
 ---
-os_nologin_shell_path: "/usr/sbin/nologin"
-
-os_shadow_perms:
-  owner: root
-  group: shadow
-  mode: "0640"
-
-os_passwd_perms:
-  owner: root
-  group: root
-  mode: "0644"
-
-# login.defs settings
-os_env_umask: "022"
-os_auth_uid_min: 1000
-os_auth_uid_max: 60000
-os_auth_gid_min: 1000
-os_auth_gid_max: 60000
-os_auth_sys_uid_min: 100
-os_auth_sys_uid_max: 999
-os_auth_sys_gid_min: 100
-os_auth_sys_gid_max: 999
-os_auth_sub_uid_min: 100000
-os_auth_sub_uid_max: 600100000
-os_auth_sub_uid_count: 65536
-os_auth_sub_gid_min: 100000
-os_auth_sub_gid_max: 600100000
-os_auth_sub_gid_count: 65536
-os_useradd_mail_dir: "/var/mail"
-os_useradd_create_home: true
-
-sysctl_custom_config:
-  # user.max_user_namespaces: 0
-  # Restrict FIFO special device creation behavior
-  fs.protected_fifos: 1
-  # enable ping from rootless docker
-  # net.ipv4.ping_group_range: 0 2147483647
-
-package_modprobe: "kmod"
-package_auditd: "auditd"
-
 packages_required_list:
   [
     "gnupg-agent",
@@ -50,7 +9,6 @@ packages_required_list:
     "unattended-upgrades",
     "apt-transport-https",
     "apt-listchanges",
+    "python3",
+    "python3-pip",
   ]
-
-packages_jdk_list: ["openjdk-11-jdk"]
-packages_jdk_extra_list: ["openjdk-8-jdk", "openjdk-17-jdk"]

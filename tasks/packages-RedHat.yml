@@ -1,6 +1,6 @@
 ---
 - name: Ensure Amazon repositories are enabled
-  shell: "amazon-linux-extras enable epel java-openjdk11 kernel-5.15 -y"
+  shell: "amazon-linux-extras enable epel kernel-5.15 -y"
   args:
     executable: /bin/bash
   changed_when: false

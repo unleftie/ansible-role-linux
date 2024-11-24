@@ -1,5 +1,4 @@
 ---
-# require the root password instead of user password
 - name: Change the "sudo" configuration
   lineinfile:
     path: "/etc/sudoers"
@@ -38,8 +37,36 @@
     executable: /bin/bash
   changed_when: false
 
-- name: Configure selinux
-  ansible.posix.selinux:
-    policy: "{{ system_selinux_policy }}"
-    state: "{{ system_selinux_state }}"
-  when: ansible_facts.selinux.status == "enabled"
+- name: Check if portable GNU assembler exist
+  stat:
+    path: "/usr/bin/as"
+  register: _assembler_bin_check
+
+- name: Protect portable GNU assembler
+  file:
+    path: "/usr/bin/as"
+    owner: "root"
+    group: "root"
+    mode: "0750"
+  when: _assembler_bin_check.stat.exists
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+
+- name: Restrict access to at
+  copy:
+    content: "root"
+    dest: "/etc/at.allow"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when: "'at' in ansible_facts.packages"
+
+- name: Protect at.deny file
+  file:
+    path: "/etc/at.deny"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when: "'at' in ansible_facts.packages"

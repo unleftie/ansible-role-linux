@@ -1,42 +1,9 @@
 ---
-os_nologin_shell_path: "/sbin/nologin"
-
-os_shadow_perms:
-  owner: root
-  group: root
-  mode: "0000"
-
-os_passwd_perms:
-  owner: root
-  group: root
-  mode: "0644"
-
-# login.defs
-os_env_umask: "022"
-os_auth_uid_min: 1000
-os_auth_uid_max: 60000
-os_auth_gid_min: 1000
-os_auth_gid_max: 60000
-os_auth_sys_uid_min: 201
-os_auth_sys_uid_max: 999
-os_auth_sys_gid_min: 201
-os_auth_sys_gid_max: 999
-os_auth_sub_uid_min: 100000
-os_auth_sub_uid_max: 600100000
-os_auth_sub_uid_count: 65536
-os_auth_sub_gid_min: 100000
-os_auth_sub_gid_max: 600100000
-os_auth_sub_gid_count: 65536
-os_useradd_mail_dir: "/var/spool/mail"
-os_useradd_create_home: true
-
-sysctl_custom_config:
-
-package_modprobe: "module-init-tools"
-package_auditd: "audit"
-
 packages_required_list:
-  ["yum-utils", "util-linux-user", "langpacks-en", "glibc-all-langpacks"]
-
-packages_jdk_list: ["java-11-openjdk"]
-packages_jdk_extra_list: ["java-1.8.0-openjdk", "java-latest-openjdk"]
+  [
+    "yum-utils",
+    "util-linux-user",
+    "langpacks-en",
+    "glibc-all-langpacks",
+    "python3",
+  ]

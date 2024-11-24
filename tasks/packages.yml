@@ -14,26 +14,6 @@
   delay: 5
   retries: 5
 
-- name: Install default java packages
-  package:
-    state: present
-    name: "{{ packages_jdk_list | default(omit, true) }}"
-  register: _progress_status
-  until: _progress_status is succeeded
-  delay: 5
-  retries: 5
-  when: packages_install_jdk | bool
-
-- name: Install extra java packages
-  package:
-    state: present
-    name: "{{ packages_jdk_extra_list | default(omit, true) }}"
-  register: _progress_status
-  until: _progress_status is succeeded
-  delay: 5
-  retries: 5
-  when: packages_install_jdk_extra | bool
-
 - name: Install required list of packages
   package:
     state: present
@@ -71,7 +51,6 @@
     state: present
     name:
       - nano
-      - python3
       - lnav
       - zip
       - unzip
