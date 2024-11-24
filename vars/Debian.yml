@@ -11,4 +11,5 @@ packages_required_list:
     "apt-listchanges",
     "python3",
     "python3-pip",
+    "apt-show-versions"
   ]

@@ -1,0 +1,66 @@
+---
+- name: Ensure group "{{ system_group_name }}" exists
+  group:
+    name: "{{ system_group_name }}"
+    state: present
+
+- name: Update root user password
+  user:
+    name: "root"
+    password: "{{ system_root_user_password | password_hash('sha512') }}"
+  no_log: true
+  when: system_root_user_update_password | bool
+
+- name: Ensure user "{{ system_user_name }}" exists
+  user:
+    name: "{{ system_user_name }}"
+    password: "!" # disable password login, for sudo command root password will be used
+    home: "/home/{{ system_user_name }}"
+    create_home: true
+    shell: "/bin/bash"
+    update_password: "on_create"
+    group: "{{ system_group_name }}"
+    state: present
+  no_log: true
+
+# Any member of this group will have the ability to run ALL commands as
+# any user on all hosts, so long as the root password is known.
+- name: Add group "{{ system_group_name }}" to sudoers.d
+  lineinfile:
+    path: "/etc/sudoers.d/{{ system_group_name }}"
+    line: "%{{ system_group_name }} ALL=(ALL) ALL"
+    state: present
+    mode: "0440"
+    create: true
+    validate: "visudo -cf %s"
+  when: system_group_name_sudoers | bool
+
+- name: Ensure ssh directory exists for "{{ system_user_name }}" user
+  file:
+    path: "/home/{{ system_user_name }}/.ssh"
+    state: directory
+    mode: "0750"
+    owner: "{{ system_user_name }}"
+    group: "{{ system_group_name }}"
+
+- name: Fetch authorized_keys from remote host
+  fetch:
+    src: "/root/.ssh/authorized_keys"
+    dest: "/tmp/authorized_keys_{{ inventory_hostname }}"
+    flat: true
+
+- name: Read authorized_keys content from fetched file
+  set_fact:
+    system_user_ssh_authorized_keys: "{{ lookup('file', '/tmp/authorized_keys_{{ inventory_hostname }}').split('\n') }}"
+
+- name: Copy authorized_keys content to "{{ system_user_name }}" user home directory
+  lineinfile:
+    path: "/home/{{ system_user_name }}/.ssh/authorized_keys"
+    line: "{{ item }}"
+    state: present
+    mode: "0600"
+    owner: "{{ system_user_name }}"
+    group: "{{ system_group_name }}"
+    create: true
+    validate: "ssh-keygen -l -f %s"
+  loop: "{{ system_user_ssh_authorized_keys }}"

@@ -9,3 +9,4 @@
         swap_configure: false
         packages_upgrade_all: false
         packages_extra: false
+        system_root_user_password: "Test-Pa$$w0rd123456"

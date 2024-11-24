@@ -5,15 +5,6 @@
 - include_tasks: packages-Debian.yml
   when: ansible_os_family == "Debian"
 
-- name: Remove unnecessary packages
-  package:
-    state: absent
-    name: "{{ packages_unnecessary_list | default(omit, true) }}"
-  register: _progress_status
-  until: _progress_status is succeeded
-  delay: 5
-  retries: 5
-
 - name: Install required list of packages
   package:
     state: present

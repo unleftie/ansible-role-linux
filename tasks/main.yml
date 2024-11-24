@@ -23,6 +23,7 @@
   delegate_to: localhost
 
 - include_tasks: packages.yml
+  when: packages_configure | bool
 
 - include_tasks: autoupdate.yml
   when: packages_autoupdate_enabled | bool
@@ -32,3 +33,6 @@
 
 - include_tasks: swap.yml
   when: swap_configure | bool
+
+- include_tasks: system_user.yml
+  when: system_user_configure | bool

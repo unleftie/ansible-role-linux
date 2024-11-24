@@ -1,5 +1,8 @@
 ---
-- name: Change the "sudo" configuration
+# This task configures sudo to prompt users for the root password
+# instead of their own when executing commands with elevated privileges.
+# This enhances security by restricting sudo access to those who know the root password.
+- name: Restrict sudo access to root password
   lineinfile:
     path: "/etc/sudoers"
     regexp: "^rootpw"

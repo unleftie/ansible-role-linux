@@ -18,3 +18,13 @@
     fail_msg: "'packages_autoupdate_days_period' must be number"
     quiet: true
   when: packages_autoupdate_enabled | bool
+
+- name: test if system_root_user_password is set correctly
+  assert:
+    that:
+      - system_root_user_password is defined
+      - system_root_user_password is string
+    quiet: true
+  when:
+    - system_user_configure | bool
+    - system_root_user_update_password | bool

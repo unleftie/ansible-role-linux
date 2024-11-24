@@ -1,9 +1,0 @@
----
-dns:
-  localhost:
-    resolvable: true
-    addrs:
-      consist-of: ["127.0.0.1", "::1"]
-    timeout: 500
-  A:google.com:
-    resolvable: true

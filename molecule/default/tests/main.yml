@@ -4,3 +4,20 @@ interface:
     exists: true
   lo:
     exists: true
+dns:
+  localhost:
+    resolvable: true
+    addrs:
+      consist-of: ["127.0.0.1", "::1"]
+    timeout: 500
+  A:google.com:
+    resolvable: true
+{% if system_user_configure | bool %}
+file:
+  /home/{{ system_user_name }}/.ssh/authorized_keys:
+    exists: true
+    filetype: file
+    mode: "0600"
+    owner: {{ system_user_name }}
+    group: {{ system_group_name }}
+{% endif %}

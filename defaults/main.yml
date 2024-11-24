@@ -1,4 +1,5 @@
 ---
+packages_configure: true
 packages_upgrade_all: true
 packages_extra: true
 
@@ -12,3 +13,6 @@ system_timezone: "Europe/Kyiv"
 
 swap_configure: true
 swap_size: 513
+
+system_user_configure: true
+system_root_user_update_password: true
