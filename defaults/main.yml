@@ -14,5 +14,5 @@ system_timezone: "Europe/Kyiv"
 swap_configure: true
 swap_size: 513
 
-system_user_configure: true
-system_root_user_update_password: true
+system_user_configure: false
+system_root_user_update_password: false
