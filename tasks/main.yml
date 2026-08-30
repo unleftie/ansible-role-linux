@@ -33,6 +33,3 @@
 
 - include_tasks: swap.yml
   when: swap_configure | bool
-
-- include_tasks: system_user.yml
-  when: system_user_configure | bool

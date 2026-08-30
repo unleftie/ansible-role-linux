@@ -3,7 +3,3 @@ swap_swappiness_value: 60
 swap_file_path: "/swapfile"
 
 system_locale: "en_US.UTF-8"
-
-system_group_name_sudoers: true
-system_user_name: "admin"
-system_group_name: "admin"
