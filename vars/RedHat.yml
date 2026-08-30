@@ -1,9 +1,3 @@
 ---
 packages_required_list:
-  [
-    "yum-utils",
-    "util-linux-user",
-    "langpacks-en",
-    "glibc-all-langpacks",
-    "python3",
-  ]
+  ["yum-utils", "util-linux-user", "langpacks-en", "python3"]

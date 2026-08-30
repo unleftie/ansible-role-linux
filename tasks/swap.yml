@@ -4,27 +4,26 @@
     path: "{{ swap_file_path }}"
   register: _swap_file_check
 
-- name: Remove old swap file
-  block:
-    - name: Turn off swap
-      shell: "swapoff -a"
-      args:
-        executable: /bin/bash
-      changed_when: false
+- name: Determine if the swap file needs to be (re)created
+  set_fact:
+    _swap_file_outdated: "{{ not _swap_file_check.stat.exists or (_swap_file_check.stat.size // 1048576) != swap_size }}"
 
-    - name: Ensure swap file is absent
+- name: Replace outdated swap file
+  when:
+    - _swap_file_check.stat.exists
+    - _swap_file_outdated | bool
+  block:
+    - name: Turn off swap file
+      command: "swapoff {{ swap_file_path }}"
+
+    - name: Remove outdated swap file
       file:
         path: "{{ swap_file_path }}"
         state: absent
-      changed_when: false
-  when: _swap_file_check.stat.exists
 
 - name: Create swap file
-  shell: "dd if=/dev/zero of={{ swap_file_path }} count='{{ swap_size }}' bs=1MiB"
-  args:
-    executable: /bin/bash
-    creates: "{{ swap_file_path }}"
-  changed_when: false
+  command: "dd if=/dev/zero of={{ swap_file_path }} count={{ swap_size }} bs=1MiB"
+  when: _swap_file_outdated | bool
 
 - name: Protect swap file
   file:
@@ -34,10 +33,8 @@
     mode: "0600"
 
 - name: Format swap file
-  shell: "mkswap {{ swap_file_path }}"
-  args:
-    executable: /bin/bash
-  changed_when: false
+  command: "mkswap {{ swap_file_path }}"
+  when: _swap_file_outdated | bool
 
 - name: Write swap entry in fstab
   ansible.posix.mount:
@@ -50,7 +47,12 @@
     state: present
 
 - name: Turn on swap
-  shell: "swapon -a"
-  args:
-    executable: /bin/bash
+  command: "swapon -a"
   changed_when: false
+
+- name: Set swap swappiness
+  ansible.posix.sysctl:
+    name: vm.swappiness
+    value: "{{ swap_swappiness_value }}"
+    state: present
+    reload: true

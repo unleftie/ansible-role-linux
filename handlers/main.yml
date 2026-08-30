@@ -3,3 +3,7 @@
   systemd:
     name: unattended-upgrades
     state: restarted
+
+- name: apt update
+  ansible.builtin.apt:
+    update_cache: true

@@ -11,31 +11,31 @@
     - 50unattended-upgrades
     - 02periodic
   notify: restart_unattended_upgrades
-  when: ansible_pkg_mgr == "apt"
+  when: ansible_facts['pkg_mgr'] == "apt"
 
 - name: Set correct automatic update utility vars
   set_fact:
     update_service: unattended-upgrades
-  notify: restart_unattended_upgrades
-  when: ansible_pkg_mgr == "apt"
+  when: ansible_facts['pkg_mgr'] == "apt"
 
 - name: Set correct automatic update utility vars
   set_fact:
     update_service: dnf-automatic-install.timer
     update_conf_path: /etc/dnf/automatic.conf
-  when: ansible_pkg_mgr == "dnf"
+  when: ansible_facts['pkg_mgr'] == "dnf"
 
 - name: Set correct automatic update utility vars
   set_fact:
     update_service: yum-cron
     update_conf_path: /etc/yum/yum-cron.conf
-  when: ansible_pkg_mgr == "yum"
+  when: ansible_facts['pkg_mgr'] == "yum"
 
 - name: Ensure automatic update utility is running and enabled on boot
   systemd:
     name: "{{ update_service }}"
     state: started
     enabled: true
+  when: update_service is defined
 
 - name: Configure autoupdates
   lineinfile:
@@ -43,4 +43,4 @@
     regexp: "^apply_updates = .+"
     line: "apply_updates = yes"
     mode: "0644"
-  when: (ansible_pkg_mgr == "yum") or (ansible_pkg_mgr == "dnf")
+  when: (ansible_facts['pkg_mgr'] == "yum") or (ansible_facts['pkg_mgr'] == "dnf")

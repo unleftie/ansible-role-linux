@@ -5,7 +5,7 @@
 - name: Restrict sudo access to root password
   lineinfile:
     path: "/etc/sudoers"
-    regexp: "^rootpw"
+    regexp: "^Defaults\\s+rootpw\\b"
     line: "Defaults rootpw"
     validate: "visudo -cf %s"
 
@@ -25,9 +25,7 @@
   community.general.locale_gen:
     name: "{{ system_locale }}"
     state: present
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_major_version in ["10", "11"]
+  when: ansible_facts['distribution'] == "Debian"
 
 - name: Ensure systemd-logind service is in the right state
   systemd:

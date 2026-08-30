@@ -5,8 +5,8 @@
     executable: /bin/bash
   changed_when: false
   when:
-    - ansible_distribution == "Amazon"
-    - ansible_distribution_major_version == "2"
+    - ansible_facts['distribution'] == "Amazon"
+    - ansible_facts['distribution_major_version'] == "2"
 
 - name: Ensure yum cache are updated
   yum:
@@ -30,7 +30,7 @@
   delay: 5
   retries: 5
   until: _progress_status is successful
-  when: ansible_pkg_mgr == "dnf"
+  when: ansible_facts['pkg_mgr'] == "dnf"
 
 - name: Install yum-cron package
   yum:
@@ -40,7 +40,7 @@
   delay: 5
   retries: 5
   until: _progress_status is successful
-  when: ansible_pkg_mgr == "yum"
+  when: ansible_facts['pkg_mgr'] == "yum"
 
 - name: Ensure yum cache are updated
   yum:

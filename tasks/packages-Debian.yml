@@ -1,23 +1,19 @@
 ---
 - name: Ensure backports repository is set
-  apt_repository:
-    repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"
+  ansible.builtin.deb822_repository:
+    name: "debian-backports"
+    types: [deb, deb-src]
+    uris: "http://deb.debian.org/debian"
+    suites: "{{ ansible_facts['distribution_release'] }}-backports"
+    components: main
+    signed_by: "/usr/share/keyrings/debian-archive-keyring.gpg"
+    install_python_debian: true
     state: present
-    install_python_apt: true
-    update_cache: true
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_major_version in ["10", "11"]
+  when: ansible_facts['distribution'] == "Debian"
+  notify: apt update
 
-- name: Ensure backports source repository is set
-  apt_repository:
-    repo: "deb-src http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"
-    state: present
-    install_python_apt: true
-    update_cache: true
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_major_version in ["10", "11"]
+- name: Ensure handlers are notified immediately to update the apt cache
+  ansible.builtin.meta: flush_handlers
 
 - name: Ensure apt cache and packages are updated
   apt:
@@ -39,15 +35,3 @@
   delay: 5
   retries: 5
   when: packages_upgrade_all | bool
-
-- name: Install extra list of packages
-  package:
-    state: present
-    name: btop
-  register: _progress_status
-  until: _progress_status is succeeded
-  delay: 5
-  retries: 5
-  when:
-    - packages_extra | bool
-    - ansible_distribution_major_version != "10"

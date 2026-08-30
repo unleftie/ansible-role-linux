@@ -8,29 +8,14 @@
 - name: Install required list of packages
   package:
     state: present
-    name:
-      - sudo
-      - bash
-      - iptables
-      - openssl
-      - curl
-      - ca-certificates
-      - gnupg
-      - gnupg2
-      - chrony
-      - file
-      - wget
-      - libuser
-      - net-tools
-      - screen
-      - tcpdump
-      - sysstat
-      - telnet
-      - bmon
-      - htop
-      - rkhunter
-      - "{{ item }}"
-  loop: "{{ packages_required_list | default(omit, true) }}"
+    name: >-
+      {{
+        [
+          "sudo", "bash", "iptables", "openssl", "curl", "ca-certificates",
+          "gnupg", "gnupg2", "chrony", "file", "wget", "screen",
+          "sysstat", "btop"
+        ] + (packages_required_list | default([]))
+      }}
   register: _progress_status
   until: _progress_status is succeeded
   delay: 5
@@ -46,7 +31,7 @@
       - unzip
       - at
       - git
-      - nmap
+      - iproute2
   register: _progress_status
   until: _progress_status is succeeded
   delay: 5
