@@ -1,6 +1,6 @@
 ---
 interface:
-  {{ ansible_default_ipv4.interface }}:
+  {{ ansible_facts['default_ipv4']['interface'] }}:
     exists: true
   lo:
     exists: true
