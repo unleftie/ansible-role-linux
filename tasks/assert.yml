@@ -1,12 +1,12 @@
 ---
-- name: test if swap_swappiness_value is set correctly
+- name: test if swap_swappiness is set correctly
   assert:
     that:
-      - swap_swappiness_value is defined
-      - swap_swappiness_value is number
-      - swap_swappiness_value <= 100
-      - swap_swappiness_value >= 0
-    fail_msg: "'swap_swappiness_value' must be between 0 and 100"
+      - swap_swappiness is defined
+      - swap_swappiness is number
+      - swap_swappiness <= 100
+      - swap_swappiness >= 0
+    fail_msg: "'swap_swappiness' must be between 0 and 100"
     quiet: true
   when: swap_configure | bool
 
@@ -18,3 +18,13 @@
     fail_msg: "'packages_autoupdate_days_period' must be number"
     quiet: true
   when: packages_autoupdate_enabled | bool
+
+- name: test if packages_autoupdate_automatic_reboot_time is set correctly
+  assert:
+    that:
+      - packages_autoupdate_automatic_reboot_time is defined
+      - packages_autoupdate_automatic_reboot_time == "now" or
+        packages_autoupdate_automatic_reboot_time is match("^([01][0-9]|2[0-3]):[0-5][0-9]$")
+    fail_msg: "'packages_autoupdate_automatic_reboot_time' must be 'now' or a 24h time in HH:MM format"
+    quiet: true
+  when: packages_autoupdate_automatic_reboot | bool

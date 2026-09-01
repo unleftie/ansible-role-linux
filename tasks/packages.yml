@@ -29,7 +29,6 @@
       - lnav
       - zip
       - unzip
-      - at
       - git
       - iproute2
   register: _progress_status

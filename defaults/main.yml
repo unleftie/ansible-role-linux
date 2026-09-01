@@ -6,10 +6,11 @@ packages_extra: true
 packages_autoupdate_enabled: true
 packages_autoupdate_days_period: 7
 packages_autoupdate_automatic_reboot: true
+packages_autoupdate_automatic_reboot_time: "06:00" # UTC
 packages_autoupdate_for_all_packages: true
 
 system_configure: true
 system_timezone: "Europe/Kyiv"
 
 swap_configure: true
-swap_size: 513
+swap_file_size_mb: 513

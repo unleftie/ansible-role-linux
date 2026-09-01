@@ -12,3 +12,40 @@ dns:
     timeout: 500
   A:google.com:
     resolvable: true
+file:
+  /etc/sudoers:
+    exists: true
+    contains:
+      - "Defaults rootpw"
+  /etc/timezone:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    contains:
+      - "{{ system_timezone }}"
+{% if packages_autoupdate_enabled | bool %}
+  /etc/apt/apt.conf.d/20auto-upgrades:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    contains:
+      - 'APT::Periodic::Update-Package-Lists "1";'
+      - 'APT::Periodic::Unattended-Upgrade "1";'
+  /etc/apt/apt.conf.d/02periodic:
+    exists: true
+    mode: "0644"
+    contains:
+      - 'APT::Periodic::Update-Package-Lists "{{ packages_autoupdate_days_period }}";'
+  /etc/apt/apt.conf.d/50unattended-upgrades:
+    exists: true
+    mode: "0644"
+    contains:
+      - 'Unattended-Upgrade::Automatic-Reboot "{{ packages_autoupdate_automatic_reboot | lower }}";'
+      - 'Unattended-Upgrade::Automatic-Reboot-Time "{{ packages_autoupdate_automatic_reboot_time }}";'
+{% endif %}
+service:
+  systemd-logind:
+    enabled: true
+    running: true
