@@ -38,15 +38,23 @@
     executable: /bin/bash
   changed_when: false
 
-- name: Check if portable GNU assembler exist
-  stat:
-    path: "/usr/bin/as"
-  register: _assembler_bin_check
-
-- name: Protect portable GNU assembler
+- name: Protect toolchain binaries
   file:
-    path: "/usr/bin/as"
+    path: "/usr/bin/{{ item }}"
     owner: "root"
     group: "root"
-    mode: "0750"
-  when: _assembler_bin_check.stat.exists
+    mode: "0700"
+  loop:
+    - as
+    - gcc
+    - cc
+    - g++
+    - c++
+    - cpp
+    - gcc-ar
+    - gcc-nm
+    - gcc-ranlib
+    - ld
+    - ld.bfd
+    - ld.gold
+  failed_when: false

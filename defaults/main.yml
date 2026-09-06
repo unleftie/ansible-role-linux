@@ -13,4 +13,4 @@ system_configure: true
 system_timezone: "Europe/Kyiv"
 
 swap_configure: true
-swap_file_size_mb: 513
+swap_file_size_mb: 514
